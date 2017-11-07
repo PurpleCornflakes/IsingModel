@@ -126,17 +126,17 @@ void e_T_m_T_gen(bool e_T, bool m_T, int N, int M,int tmax, int tdis){
 
 int main()
 {
-    int N = 100, M = 100;
+    int N = 32, M = 32;
     int tmax = 5000;
     int tdis = 1000;
     bool e_dist = true;
     bool m_dist = true; 
-    bool e_T = false;
-    bool m_T = true;
+    bool e_T = true;
+    bool m_T = false;
     float T = 1.5;
 
-    dist_gen(T, e_dist, m_dist, N, M, tmax, tdis);
-    // e_T_m_T_gen(e_T, m_T, N, M, tmax, tdis);
+    // dist_gen(T, e_dist, m_dist, N, M, tmax, tdis);
+    e_T_m_T_gen(e_T, m_T, N, M, tmax, tdis);
 
     std::cout << "\033[" << N+1 << "B" <<std::endl;
 
