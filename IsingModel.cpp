@@ -41,11 +41,11 @@ void dist_gen(float T, bool e_dist, bool m_dist, int N, int M, int tmax, int tdi
     // if(e_dist)
         float ee[2]; // array to store energy and squared energy
         std::ofstream e_file;
-        e_file.open("e_dist", std::ios::out);
+        e_file.open("e_dist_T15", std::ios::out);
     // if(m_dist)
         float m;
         std::ofstream m_file;
-        m_file.open("m_dist", std::ios::out);
+        m_file.open("m_dist_T15", std::ios::out);
 
     IsingModel ising(N, M);
     ising.draw(0, false);
@@ -126,17 +126,17 @@ void e_T_m_T_gen(bool e_T, bool m_T, int N, int M,int tmax, int tdis){
 
 int main()
 {
-    int N = 32, M = 32;
+    int N = 100, M = 100;
     int tmax = 5000;
     int tdis = 1000;
     bool e_dist = true;
-    bool m_dist = false; 
+    bool m_dist = true; 
     bool e_T = false;
     bool m_T = true;
     float T = 1.5;
 
-    // dist_gen(T, e_dist, m_dist, N, M, tmax, tdis);
-    e_T_m_T_gen(e_T, m_T, N, M, tmax, tdis);
+    dist_gen(T, e_dist, m_dist, N, M, tmax, tdis);
+    // e_T_m_T_gen(e_T, m_T, N, M, tmax, tdis);
 
     std::cout << "\033[" << N+1 << "B" <<std::endl;
 
