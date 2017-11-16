@@ -9,6 +9,7 @@ g++ IsingModel.cpp -o ising -std=c++11
 32X32 spins
 5000 iterations
 ![](imgs/e_T.png)
+![](imgs/ee_T.png)
 ![](imgs/c_T.png)
 
 #### M_T, chi_T
