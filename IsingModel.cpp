@@ -20,14 +20,14 @@ private:
     int N, M;
     int num_s;
     float T;
-    vec s;
-    float e; //current system energy
+    float e; // current system energy
     float e_sqr;
     void find_nns(int n, int (&nns)[4]);
     void energy();
 public:
     IsingModel(int N, int M);
     ~IsingModel(void);
+    vec s; // N * M spin lattice to 1D vec
     void Monte_Carlo(bool eval_energy);
     inline void set_T(float new_T);
     inline void get_energy(float ee[2]);
@@ -35,7 +35,7 @@ public:
     void draw(int i, bool eval_energy);
 };
 
-void dist_gen(float T, bool e_dist, bool m_dist, int N, int M, int tmax, int tdis)
+void dist_gen(float T, bool e_dist, bool m_dist, bool slice, int N, int M, int tmax, int tdis)
 {
     
     // if(e_dist)
@@ -46,23 +46,38 @@ void dist_gen(float T, bool e_dist, bool m_dist, int N, int M, int tmax, int tdi
         float m;
         std::ofstream m_file;
         m_file.open("m_dist_T15", std::ios::out);
+    // if(slice)
+        std::ofstream slice_file;
+        slice_file.open("slice_Tc", std::ios::out);
 
     IsingModel ising(N, M);
-    ising.draw(0, false);
+    // ising.draw(0, false);
     ising.set_T(T);
     for(int t = 0; t < tdis; ++t){
         ising.Monte_Carlo(false);
-        ising.draw(t+1, false);}
+        std::cout << t << std::endl;
+        // ising.draw(t+1, false);
+    }
 
+    // start record after 1000 steps
     for(int t = 0; t < tmax - tdis; ++t){
-        ising.Monte_Carlo(true);
-        ising.draw(t+tdis+1, false);
-        ising.get_energy(ee);
-        ising.get_m(&m);
+        std::cout << t << std::endl;
+        ising.Monte_Carlo(false);
+        // ising.draw(t+tdis+1, false);
+        // ising.get_energy(ee);
+        // ising.get_m(&m);
+        if(slice){
+            for(int i = N/2-1; i < N/2; ++i){
+                for(int j = 0; j < M-1; ++j)
+                    slice_file << ising.s[M*i+j] << ",";
+                slice_file << ising.s[M*i+(M-1)]; // last column needs no ','
+            slice_file << std::endl;}
+        }
         if(e_dist) 
             e_file << ee[0] << std::endl;
         if(m_dist)  
             m_file << m << std::endl;}
+        slice_file.close();
         e_file.close();
         m_file.close();
 }
@@ -126,23 +141,22 @@ void e_T_m_T_gen(bool e_T, bool m_T, int N, int M,int tmax, int tdis){
 
 int main()
 {
-    int N = 32, M = 32;
-    int tmax = 5000;
-    int tdis = 1000;
-    bool e_dist = true;
-    bool m_dist = true; 
+    int N = 100, M = 100;
+    int tmax = N*M + 4000;
+    int tdis = N*M;
+    bool slice = true;
+    bool e_dist = false;
+    bool m_dist = false; 
     bool e_T = true;
     bool m_T = false;
-    float T = 1.5;
+    float T = 2.27; //Tc = 2.269
 
-    // dist_gen(T, e_dist, m_dist, N, M, tmax, tdis);
-    e_T_m_T_gen(e_T, m_T, N, M, tmax, tdis);
+    dist_gen(T, e_dist, m_dist, slice, N, M, tmax, tdis);
+    // e_T_m_T_gen(e_T, m_T, N, M, tmax, tdis);
 
     std::cout << "\033[" << N+1 << "B" <<std::endl;
 
 }
-
-
 
 
 // constructor
