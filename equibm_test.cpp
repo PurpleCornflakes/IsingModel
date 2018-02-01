@@ -21,7 +21,9 @@
 typedef std::vector<int> veci4;
 typedef std::vector<short int> veci2;
 typedef std::vector<unsigned short> vecui2;
-
+typedef std::vector<int>::const_iterator veci4_iter;
+typedef std::vector<short int>::const_iterator veci2_iter;
+typedef std::vector<unsigned short>::const_iterator vecui2_iter;
 
 inline int mod(int a, int b)
 {
@@ -56,7 +58,7 @@ void IsingModel::get_energy()
 {
     veci4 nns;
     this->e = 0;
-    for (auto iter = this->valid_pos.begin(); iter != this->valid_pos.end(); ++iter){
+    for (veci4_iter iter = this->valid_pos.begin(); iter != this->valid_pos.end(); ++iter){
         this->find_nns(*iter, nns);
         for (int j = 0; j < this->dim ; ++j)
             this->e -= this->lattice[*iter] * this->lattice[nns[j]]; /* look at positive direction only */
@@ -67,7 +69,7 @@ void IsingModel::get_energy()
 void IsingModel::get_m()
 {
     this->m = 0;
-    for (auto iter = this->valid_pos.begin(); iter != this->valid_pos.end(); ++iter){
+    for (veci4_iter iter = this->valid_pos.begin(); iter != this->valid_pos.end(); ++iter){
         this->m += this->lattice[*iter]; /* look at positive direction only */
     }
     assert(abs(this->m) <= this->valid_pos.size());
@@ -88,7 +90,7 @@ IsingModel::IsingModel(std::string filename, vecui2& dims, float T, bool is_fBC)
         this->lattice[i] = (s_vec10[i] == 1 ? 1 : -1);}
 
     if(is_fBC)
-        for(auto itr = dims.begin(); itr != dims.end(); ++itr)
+        for(vecui2_iter itr = dims.begin(); itr != dims.end(); ++itr)
             this->dims.push_back(*itr + 2);
     else 
         this->dims = dims;
@@ -195,7 +197,8 @@ void dist_gen(float T, vecui2& dims, int tmax, std::string filename, bool draw_s
 int main(int argc, char *argv[])
 {
     // set default
-    vecui2 dims({1000,1000}); /* {N,M} */
+    vecui2 dims; /* {N,M} */
+    dims.push_back(1000);dims.push_back(1000);
     float T = 2.27; //Tc = 2.269
     bool draw_s = false;
     bool is_fBC = false;

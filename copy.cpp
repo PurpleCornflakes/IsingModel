@@ -20,6 +20,9 @@
 typedef std::vector<int> veci4;
 typedef std::vector<short int> veci2;
 typedef std::vector<unsigned short> vecui2;
+typedef std::vector<int>::const_iterator veci4_iter;
+typedef std::vector<short int>::const_iterator veci2_iter;
+typedef std::vector<unsigned short>::const_iterator vecui2_iter;
 
 
 inline int mod(int a, int b)
@@ -51,7 +54,7 @@ class IsingModel
 IsingModel::IsingModel(vecui2& dims, float T, bool is_fBC)
 {
     if(is_fBC)
-        for(auto itr = dims.begin(); itr != dims.end(); ++itr)
+        for(vecui2_iter itr = dims.begin(); itr != dims.end(); ++itr)
             this->dims.push_back(*itr + 2);
     else 
         this->dims = dims;
@@ -86,7 +89,7 @@ IsingModel::IsingModel(vecui2& dims, float T, bool is_fBC)
 
     this->T = T;
     this->lattice.resize(this->num_lattice, 0); // init all to 0
-    for(auto iter = this->valid_pos.begin(); iter != this->valid_pos.end(); ++iter)
+    for(veci4_iter iter = this->valid_pos.begin(); iter != this->valid_pos.end(); ++iter)
         this->lattice[*iter] = 1;
 }
 
@@ -147,7 +150,7 @@ void IsingModel::Write_lattice(std::string filename)
 {
     // write lattice(-1,1) into file(0,1)
     veci2 s_vec10;
-    for(auto iter = this->lattice.begin(); iter != this->lattice.end(); ++iter)
+    for(veci2_iter iter = this->lattice.begin(); iter != this->lattice.end(); ++iter)
         s_vec10.push_back(*iter == 1 ? 1 : 0);
     const char* c_filename = filename.c_str();
     write_spin(c_filename,s_vec10);

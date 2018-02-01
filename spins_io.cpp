@@ -3,9 +3,7 @@
 #include <cmath>
 #include <vector>
 
-void write_spin(const char * filename, const std::vector<short>& vec);
-void read_spin(const char * filename, std::vector<short>& vec);
-
+typedef std::vector<short int>::const_iterator veci2_iter;
 
 // int main(){
 //     std::vector<short> vec;
@@ -24,7 +22,7 @@ void read_spin(const char * filename, std::vector<short>& vec);
 void write_spin(const char * filename, const std::vector<short>& vec)
 {
     std::ofstream outfile(filename);
-    for (auto itr = vec.begin(); itr!=vec.end(); ++itr){
+    for (veci2_iter itr = vec.begin(); itr!=vec.end(); ++itr){
         outfile << *itr;
     }
     outfile.close();
