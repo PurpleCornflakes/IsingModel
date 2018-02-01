@@ -120,9 +120,10 @@ void IsingModel::draw2D(int t)
         if ((i+1) % M == 0) str += "\n";
     }
     std::cout << str;
-    printf(" step = %d, T = %.3f ", t,  this->T);
+    std::cout << " step = " << t << ", T = " << this->T << std::endl; 
+    // printf(" step = %d, T = %.3f ", t, this->T);
     std::fflush(stdout);
-    std::cout << "\033[" << N+1 << "A";
+    std::cout << "\033[" << N+2 << "A";
 }
 
 void IsingModel::Monte_Carlo()
@@ -132,9 +133,6 @@ void IsingModel::Monte_Carlo()
     for(int k = 0; k < this->valid_pos.size(); ++k){ 
         I = this->valid_pos[std::rand()%this->valid_pos.size()];
         this->find_nns(I, nns);
-
-        for(auto iter= nns.begin(); iter != nns.end(); ++iter)
-            std::cout << I << ":" << *iter << std::endl;
 
         e = 0;
         for(int j = 0; j < nns.size(); ++j)
@@ -175,7 +173,7 @@ int main(int argc, char *argv[])
     // set default
     vecui2 dims({7,7}); /* {N,M} */
     float T = 2.27; //Tc = 2.269
-    bool draw_s = false;
+    bool draw_s = false; // we can only draw 2D lattice
     bool is_fBC = false;
     int tdis = 1;
     std::string filename("ss");
@@ -196,7 +194,7 @@ int main(int argc, char *argv[])
         for(int i = 0; i < dim; ++i){
             dims[i] = atoi(argv[i+3]);
             tdis *= dims[i];
-            filename += mine::int2string(dims[i]) + "_";
+            filename += "d" + mine::int2string(dims[i]) + "_";
         }
         filename += mine::int2string(tdis)+ "MC";
     }

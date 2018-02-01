@@ -170,11 +170,11 @@ void thermalize(float T, vecui2& dims, int tdis, std::string filename, bool draw
 int main(int argc, char *argv[])
 {
     // set default
-    vecui2 dims({7,7}); /* {N,M} */
+    vecui2 dims({2,3}); /* {N,M} */
     float T = 2.27; //Tc = 2.269
-    bool draw_s = true;
-    bool is_fBC = false;
-    int tdis = 1;
+    bool draw_s = false;
+    bool is_fBC = true;
+    int tdis = 3;
     std::string filename("ss");
     
   

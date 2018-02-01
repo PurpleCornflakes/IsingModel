@@ -38,7 +38,7 @@ void read_spin(const char * filename, std::vector<short>& vec)
         int size = infile.tellg();
         infile.seekg(0, infile.beg);
         char * buffer = new char [size];
-        std::cout << "file size = " << size << "bytes, reading ..." << std::endl;
+        // std::cout << "file size = " << size << "bytes, reading ..." << std::endl;
         infile.read(buffer, size);
         infile.close();
 

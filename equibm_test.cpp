@@ -1,16 +1,15 @@
 #include <iostream>
 #include <fstream>
-#include <cstdio>
-#include <cstdlib>
-#include <cmath>
 #include <vector>
 #include <string>
-#include <cassert>
-#include <omp.h>
-#include <numeric>
-/* std::accumulate, std::inner_product */
+#include <cstdio>
+#include <cstdlib>
+#include <cmath> //abs()
+#include <cassert> //assert()
+#include <omp.h> //pragma parallel
+#include <numeric> /* std::accumulate, std::inner_product */
 #include <stdlib.h>  /* atoi */
-#include "string_utils.cpp"
+#include "string_utils.cpp" // int2string
 #include "spins_io.cpp" // vec read/write is 0,1 instead of -1,1 
 /* void read_spin(const char * filename, std::vector<short>& vec); */
 #include "indx_utils.cpp" 
@@ -31,19 +30,6 @@ inline int mod(int a, int b)
 }
 
 
-// void IsingModel::energy()
-// {
-//     int nns[4];
-//     this->e = 0;
-//     for (vecl_iter iter = this->pos_valid.begin(); iter != this->pos_valid.end(); ++iter){
-//         this->find_nns(*iter, nns);
-//         this->e -= this->s[*iter] * this->s[nns[1]]; /* down */
-//         this->e -= this->s[*iter] * this->s[nns[3]]; /* right */
-//     }
-//     assert(abs(this->e) <= this->num_s * 2 + 1e-5);
-//     this->e_sqr = this->e * this->e;
-// }
-
 class IsingModel
 {
     private:
@@ -56,12 +42,36 @@ class IsingModel
         veci2 lattice;
 
     public: 
+        int e,m;
         IsingModel(std::string filename, vecui2& dims, float T, bool is_fBC = false);
         void Monte_Carlo();
+        void get_energy();
+        void get_m();
         void draw2D(int i);
+        
+
 };
 
+void IsingModel::get_energy()
+{
+    veci4 nns;
+    this->e = 0;
+    for (auto iter = this->valid_pos.begin(); iter != this->valid_pos.end(); ++iter){
+        this->find_nns(*iter, nns);
+        for (int j = 0; j < this->dim ; ++j)
+            this->e -= this->lattice[*iter] * this->lattice[nns[j]]; /* look at positive direction only */
+    }
+    assert(abs(this->e) <= this->valid_pos.size() * this->dim);
+}
 
+void IsingModel::get_m()
+{
+    this->m = 0;
+    for (auto iter = this->valid_pos.begin(); iter != this->valid_pos.end(); ++iter){
+        this->m += this->lattice[*iter]; /* look at positive direction only */
+    }
+    assert(abs(this->m) <= this->valid_pos.size());
+}
 
 IsingModel::IsingModel(std::string filename, vecui2& dims, float T, bool is_fBC)
 {
@@ -76,9 +86,6 @@ IsingModel::IsingModel(std::string filename, vecui2& dims, float T, bool is_fBC)
 
     for(int i = 0; i < this->num_lattice; ++i){
         this->lattice[i] = (s_vec10[i] == 1 ? 1 : -1);}
-
-    // for(auto iter = this->lattice.begin(); iter != this->lattice.end(); ++iter)
-    //     std::cout << *iter << std::endl;
 
     if(is_fBC)
         for(auto itr = dims.begin(); itr != dims.end(); ++itr)
@@ -106,6 +113,7 @@ IsingModel::IsingModel(std::string filename, vecui2& dims, float T, bool is_fBC)
     else
         for(int I = 0; I < this->num_lattice; ++I)
             this->valid_pos.push_back(I);
+
 }
 
 
@@ -138,7 +146,7 @@ void IsingModel::draw2D(int t)
         if ((i+1) % M == 0) str += "\n";
     }
     std::cout << str;
-    printf(" step = %d, T = %.3f ", t,  this->T);
+    printf(" step = %d, e = %d ", t,  this->e);
     std::fflush(stdout);
     std::cout << "\033[" << N+1 << "A";
 }
@@ -150,9 +158,6 @@ void IsingModel::Monte_Carlo()
     for(int k = 0; k < this->valid_pos.size(); ++k){ 
         I = this->valid_pos[std::rand()%this->valid_pos.size()];
         this->find_nns(I, nns);
-
-        for(auto iter= nns.begin(); iter != nns.end(); ++iter)
-            std::cout << I << ":" << *iter << std::endl;
 
         e = 0;
         for(int j = 0; j < nns.size(); ++j)
@@ -169,35 +174,33 @@ void IsingModel::Monte_Carlo()
 void dist_gen(float T, vecui2& dims, int tmax, std::string filename, bool draw_s, bool is_fBC)
 {
     IsingModel ising(filename, dims, T, is_fBC);
-    if(draw_s) ising.draw2D(0);
-    if(draw_s) std::cout << "\033[" << dims[0]+3 << "B" <<std::endl;
-    // float e; // array to store energy and squared energy
-    // std::ofstream e_file;
-    // e_file.open("e_dist_T15", std::ios::out);
-    // float m;
-    // std::ofstream m_file;
-    // m_file.open("m_dist_T15", std::ios::out);
-    // for(int t = 0; t < tmax; ++t){
-    //     ising.Monte_Carlo();
-    //     ising.draw2D(t+1);
-    //     ising.get_energy(e);
-    //     ising.get_m(&m);
-    //     e_file << e << std::endl;
-    //     m_file << m << std::endl;
-    // }
-    // e_file.close();
-    // m_file.close();
+    // if(draw_s) ising.draw2D(0);
+    std::ofstream e_file("e_dist_T");
+    std::ofstream m_file("m_dist_T");
+    for(int t = 0; t < tmax; ++t){
+        ising.Monte_Carlo();
+        ising.get_energy();
+        ising.get_m();
+        if(draw_s) ising.draw2D(t+1);
+        e_file << ising.e << std::endl;
+        m_file << ising.m << std::endl;
+    }
+
+    if(draw_s) {std::cout << std::endl; std::cout << "\033[" << dims[0]+ 4 << "B";}
+
+    e_file.close();
+    m_file.close();
 }
 
 int main(int argc, char *argv[])
 {
     // set default
-    vecui2 dims({5,6}); /* {N,M} */
+    vecui2 dims({1000,1000}); /* {N,M} */
     float T = 2.27; //Tc = 2.269
-    bool draw_s = true;
+    bool draw_s = false;
     bool is_fBC = false;
-    int tmax = 100;
-    std::string filename("ss_T2.25_pBC_d5_d6_30MC");
+    int tmax = 20000;
+    std::string filename("s_pBC_L1000_1mMC");
     
   
     // argv[0]:program name, argv[1]:T, argv[2]:BC, argv[3:]:dims
