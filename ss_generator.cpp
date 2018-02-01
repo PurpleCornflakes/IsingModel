@@ -163,7 +163,10 @@ void thermalize(float T, vecui2& dims, int tdis, std::string filename, bool draw
 
     for(int t = 0; t < tdis; ++t){
         ising.Monte_Carlo();
-        if(draw_s) ising.draw2D(t+1);
+        if(draw_s) 
+        	ising.draw2D(t+1);
+        else 
+        	std::cout << "t = " << t << std::endl;
     }
     if(draw_s) std::cout << "\033[" << dims[0]+3 << "B" <<std::endl;
     ising.Write_lattice(filename);
@@ -173,11 +176,14 @@ void thermalize(float T, vecui2& dims, int tdis, std::string filename, bool draw
 int main(int argc, char *argv[])
 {
     // set default
-    vecui2 dims({2,3}); /* {N,M} */
+    vecui2 dims; /* {N,M} */
+    dims.push_back(3);
+    dims.push_back(4);
+    dims.push_back(5);    
     float T = 2.27; //Tc = 2.269
     bool draw_s = false;
-    bool is_fBC = true;
-    int tdis = 3;
+    bool is_fBC = false;
+    int tdis = 1;
     std::string filename("ss");
     
   

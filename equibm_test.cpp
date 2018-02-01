@@ -69,7 +69,7 @@ void IsingModel::get_energy()
 void IsingModel::get_m()
 {
     this->m = 0;
-    for (auto iter = this->valid_pos.begin(); iter != this->valid_pos.end(); ++iter){
+    for (veci4_iter iter = this->valid_pos.begin(); iter != this->valid_pos.end(); ++iter){
         this->m += this->lattice[*iter]; /* look at positive direction only */
     }
     assert(abs(this->m) <= this->valid_pos.size());
@@ -177,8 +177,8 @@ void dist_gen(float T, vecui2& dims, int tmax, std::string filename, bool draw_s
 {
     IsingModel ising(filename, dims, T, is_fBC);
     // if(draw_s) ising.draw2D(0);
-    std::ofstream e_file("e_dist_T");
-    std::ofstream m_file("m_dist_T");
+    std::ofstream e_file("e_dist_3D_500");
+    std::ofstream m_file("m_dist_3D_500");
     for(int t = 0; t < tmax; ++t){
         ising.Monte_Carlo();
         ising.get_energy();
@@ -198,11 +198,11 @@ int main(int argc, char *argv[])
 {
     // set default
     vecui2 dims; /* {N,M} */
-    dims.push_back(1000);dims.push_back(1000);
+    dims.push_back(500);dims.push_back(500);dims.push_back(500);
     float T = 2.27; //Tc = 2.269
     bool draw_s = false;
     bool is_fBC = false;
-    int tmax = 2;
+    int tmax = 20000;
     std::string filename("s_pBC_L1000_1mMC");
     
   
