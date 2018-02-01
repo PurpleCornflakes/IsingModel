@@ -69,7 +69,7 @@ void IsingModel::get_energy()
 void IsingModel::get_m()
 {
     this->m = 0;
-    for (veci4_iter iter = this->valid_pos.begin(); iter != this->valid_pos.end(); ++iter){
+    for (auto iter = this->valid_pos.begin(); iter != this->valid_pos.end(); ++iter){
         this->m += this->lattice[*iter]; /* look at positive direction only */
     }
     assert(abs(this->m) <= this->valid_pos.size());
@@ -202,7 +202,7 @@ int main(int argc, char *argv[])
     float T = 2.27; //Tc = 2.269
     bool draw_s = false;
     bool is_fBC = false;
-    int tmax = 20000;
+    int tmax = 2;
     std::string filename("s_pBC_L1000_1mMC");
     
   

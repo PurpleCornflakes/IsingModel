@@ -4,6 +4,10 @@ Plese compile using c++11 standard.
 g++ IsingModel.cpp -o ising -std=c++11
 ```
 
+If the g++ is not g++7 version(e.g HPC and NSCC), just use
+```
+gcc -o eq_test -lstdc++ -std=c++11 equibm_test.cpp
+```
 
 #### E_T, C_T
 32X32 spins
