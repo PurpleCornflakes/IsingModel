@@ -9,10 +9,10 @@
 #include <omp.h> //pragma parallel
 #include <numeric> /* std::accumulate, std::inner_product */
 #include <stdlib.h>  /* atoi */
-#include "string_utils.cpp" // int2string
-#include "spins_io.cpp" // vec read/write is 0,1 instead of -1,1 
+#include "utils/string_utils.cpp" // int2string
+#include "utils/spins_io.cpp" // vec read/write is 0,1 instead of -1,1 
 /* void read_spin(const char * filename, std::vector<short>& vec); */
-#include "indx_utils.cpp" 
+#include "utils/indx_utils.cpp" 
 /* void index_convert_one2d(const int I, const vecui2 dims, vecui2& indx)
    int index_convert_d2one(const vecui2& indx, const vecui2 dims) */
 
@@ -83,6 +83,8 @@ IsingModel::IsingModel(std::string filename, vecui2& dims, float T, bool is_fBC)
     const char* c_filename = filename.c_str();
     read_spin(c_filename,s_vec10);
 
+    std::cout << s_vec10.size() << std::endl;
+
     this->num_lattice = s_vec10.size();
     this->lattice.resize(this->num_lattice);
 
@@ -115,6 +117,7 @@ IsingModel::IsingModel(std::string filename, vecui2& dims, float T, bool is_fBC)
     else
         for(int I = 0; I < this->num_lattice; ++I)
             this->valid_pos.push_back(I);
+    std::cout << this->valid_pos.size() << "," << this->dim << std::endl;
 
 }
 
@@ -177,8 +180,8 @@ void dist_gen(float T, vecui2& dims, int tmax, std::string filename, bool draw_s
 {
     IsingModel ising(filename, dims, T, is_fBC);
     // if(draw_s) ising.draw2D(0);
-    std::ofstream e_file("e_dist_3D_500");
-    std::ofstream m_file("m_dist_3D_500");
+    std::ofstream e_file("e_L1k_Tc");
+    std::ofstream m_file("m_L1k_Tc");
     for(int t = 0; t < tmax; ++t){
         ising.Monte_Carlo();
         ising.get_energy();
@@ -198,11 +201,12 @@ int main(int argc, char *argv[])
 {
     // set default
     vecui2 dims; /* {N,M} */
-    dims.push_back(500);dims.push_back(500);dims.push_back(500);
+    dims.clear();
+    dims.push_back(1000);dims.push_back(1000);
     float T = 2.27; //Tc = 2.269
     bool draw_s = false;
     bool is_fBC = false;
-    int tmax = 20000;
+    int tmax = 1;
     std::string filename("s_pBC_L1000_1mMC");
     
   
