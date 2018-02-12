@@ -10,10 +10,10 @@
 #include <numeric>
 /* std::accumulate, std::inner_product */
 #include <stdlib.h>  /* atoi */
-#include "string_utils.cpp"
-#include "spins_io.cpp" // vec read/write is 0,1 instead of -1,1 
+#include "utils/string_utils.cpp"
+#include "utils/spins_io.cpp" // vec read/write is 0,1 instead of -1,1 
 /* void write_spin(const char * filename, const std::vector<short>& vec) */
-#include "indx_utils.cpp" 
+#include "utils/indx_utils.cpp" 
 /* void index_convert_one2d(const int I, const vecui2 dims, vecui2& indx)
    int index_convert_d2one(const vecui2& indx, const vecui2 dims) */
 

@@ -1,3 +1,7 @@
+### Ising Model by Metropolic MC (by Ling & Chen)
+1. `ss_generator.c` to get a configuration in equilibrium
+2. `read in the spin lattice, iterate and record E and M to check Equilibrium distribution`
+
 Plese compile using c++11 standard.
 
 ```
